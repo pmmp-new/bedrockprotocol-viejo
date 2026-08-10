@@ -399,30 +399,24 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 		}else{
 			$this->inputFlags->write($out, $protocolId >= ProtocolInfo::PROTOCOL_1_21_50 ? PlayerAuthInputFlags::NUMBER_OF_FLAGS : 64);
 		}
-
 		VarInt::writeUnsignedInt($out, $this->inputMode);
 		VarInt::writeUnsignedInt($out, $this->playMode);
-		
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40){
 			VarInt::writeSignedInt($out, $this->interactionMode);
 		}else{
 			VarInt::writeUnsignedInt($out, $this->interactionMode);
 		}
-
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_21_40){
 			CommonTypes::putVector2($out, $this->interactRotation);
 		}elseif($this->playMode === PlayMode::VR){
 			assert($this->vrGazeDirection !== null);
 			CommonTypes::putVector3($out, $this->vrGazeDirection);
 		}
-		
 		VarInt::writeUnsignedLong($out, $this->tick);
 		CommonTypes::putVector3($out, $this->delta);
-
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40){
 			CommonTypes::writeOptional($out, $this->itemInteractionData, static fn(ByteBufferWriter $out, ItemInteractionData $data) => $data->write($out));
 			CommonTypes::writeOptional($out, $this->itemStackRequest, fn(ByteBufferWriter $out, ItemStackRequest $request) => $request->write($out, $protocolId));
-			
 			CommonTypes::writeOptional($out, $this->blockActions, static function(ByteBufferWriter $out, array $array) : void{
 				VarInt::writeSignedInt($out, count($array));
 				foreach($array as $v){
@@ -430,7 +424,6 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 					$v->write($out);
 				}
 			});
-			
 			\pmmp\encoding\Byte::writeUnsigned($out, 0); 
 			\pmmp\encoding\Byte::writeUnsigned($out, 0); 
 		}else{
