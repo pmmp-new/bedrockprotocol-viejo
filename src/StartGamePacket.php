@@ -262,7 +262,11 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		LE::writeUnsignedLong($out, $this->blockPaletteChecksum);
 		CommonTypes::putUUID($out, $this->worldTemplateId);
 		CommonTypes::putBool($out, $this->enableClientSideChunkGeneration);
-		CommonTypes::putBool($out, $this->blockNetworkIdsAreHashes);
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40){
+			CommonTypes::putBool($out, true);
+		}else{
+			CommonTypes::putBool($out, $this->blockNetworkIdsAreHashes);
+		}
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_21_100 && $protocolId <= ProtocolInfo::PROTOCOL_1_21_124){
 			CommonTypes::putBool($out, $this->enableTickDeathSystems);
 		}
