@@ -60,7 +60,7 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 	protected function decodePayload(ByteBufferReader $in, int $protocolId) : void{
 		$this->requestId = CommonTypes::readLegacyItemStackRequestId($in);
 
-		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_30){
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40){
 			$this->requestChangedSlots = CommonTypes::readOptional($in, static function(ByteBufferReader $in) : array{
 				$result = [];
 				for($i = 0, $len = VarInt::readUnsignedInt($in); $i < $len; ++$i){
@@ -74,11 +74,11 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 			}
 		}
 
-		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_30 && Byte::readUnsigned($in) !== 1){
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40 && Byte::readUnsigned($in) !== 1){
 			throw new PacketDecodeException("Dummy optional bool for transactionType should always be 1");
 		}
 		$transactionType = VarInt::readUnsignedInt($in);
-		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_30 && Byte::readUnsigned($in) !== 1){
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40 && Byte::readUnsigned($in) !== 1){
 			throw new PacketDecodeException("Dummy optional bool for trData should always be 1");
 		}
 		$this->trData = match($transactionType) {
@@ -95,7 +95,7 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 	protected function encodePayload(ByteBufferWriter $out, int $protocolId) : void{
 		CommonTypes::writeLegacyItemStackRequestId($out, $this->requestId);
 
-		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_30){
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40){
 			CommonTypes::writeOptional($out, $this->requestChangedSlots, static function(ByteBufferWriter $out, array $value) : void{
 				VarInt::writeUnsignedInt($out, count($value));
 				foreach($value as $changedSlots){
@@ -112,7 +112,7 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 		}
 		VarInt::writeUnsignedInt($out, $this->trData->getTypeId());
 
-		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_30){
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40){
 			Byte::writeUnsigned($out, 1);
 		}
 		$this->trData->encodeTransaction($out, $protocolId);
