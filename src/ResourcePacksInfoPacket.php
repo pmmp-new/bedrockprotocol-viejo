@@ -28,7 +28,13 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 	public const NETWORK_ID = ProtocolInfo::RESOURCE_PACKS_INFO_PACKET;
 
 	/** @var ResourcePackInfoEntry[] */
+
+	/**
+	 * @var ResourcePackInfoEntry[]
+	 * @phpstan-var list<ResourcePackInfoEntry>
+	 */
 	public array $resourcePackEntries = [];
+	
 	/** @var BehaviorPackInfoEntry[] */
 	public array $behaviorPackEntries = [];
 	public bool $mustAccept = false; //if true, forces client to choose between accepting packs or being disconnected
