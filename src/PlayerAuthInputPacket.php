@@ -288,7 +288,7 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 		$this->headYaw = LE::readFloat($in);
 
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40){
-			\pmmp\encoding\Byte::readUnsigned($in); 
+			\pmmp\encoding\Byte::readUnsigned($in);
 			$this->inputFlags = new BitSet(PlayerAuthInputFlags::NUMBER_OF_FLAGS);
 			
 			$flagCount = VarInt::readUnsignedInt($in);
@@ -334,7 +334,7 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 
 			CommonTypes::readOptional($in, CommonTypes::getVector2(...));
 			CommonTypes::readOptional($in, CommonTypes::getActorUniqueId(...));
-			$this->vehicleInfo = null; 
+			$this->vehicleInfo = null;
 		}else{
 			if($this->inputFlags->get(PlayerAuthInputFlags::PERFORM_ITEM_INTERACTION)){
 				$this->itemInteractionData = ItemInteractionData::read($in);
@@ -384,7 +384,7 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 		LE::writeFloat($out, $this->headYaw);
 
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40){
-			\pmmp\encoding\Byte::writeUnsigned($out, 0); 
+			\pmmp\encoding\Byte::writeUnsigned($out, 0);
 			$flagsArray = [];
 			for($i = 0; $i < PlayerAuthInputFlags::NUMBER_OF_FLAGS; ++$i){
 				if($this->inputFlags->get($i)){

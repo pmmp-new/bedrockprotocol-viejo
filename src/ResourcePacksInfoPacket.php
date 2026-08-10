@@ -107,9 +107,13 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 			$this->worldTemplateVersion = CommonTypes::getString($in);
 		}
 
-		$resourcePackCount = LE::readUnsignedShort($in);
-		while($resourcePackCount-- > 0){
-			$this->resourcePackEntries[] = ResourcePackInfoEntry::read($in, $protocolId);
+		if($protocolId >= ProtocolInfo::CURRENT_PROTOCOL){
+			$this->resourcePackEntries = CommonTypes::readList($in, static fn(ByteBufferReader $in) => ResourcePackInfoEntry::read($in, $protocolId));
+		}else{
+			$resourcePackCount = LE::readUnsignedShort($in);
+			while($resourcePackCount-- > 0){
+				$this->resourcePackEntries[] = ResourcePackInfoEntry::read($in, $protocolId);
+			}
 		}
 
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_20_30 && $protocolId < ProtocolInfo::PROTOCOL_1_21_40){
@@ -142,10 +146,16 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 			CommonTypes::putUUID($out, $this->worldTemplateId);
 			CommonTypes::putString($out, $this->worldTemplateVersion);
 		}
-		LE::writeUnsignedShort($out, count($this->resourcePackEntries));
-		foreach($this->resourcePackEntries as $entry){
-			$entry->write($out, $protocolId);
+
+		if($protocolId >= ProtocolInfo::CURRENT_PROTOCOL){
+			CommonTypes::writeList($out, $this->resourcePackEntries, static fn(ByteBufferWriter $out, ResourcePackInfoEntry $entry) => $entry->write($out, $protocolId));
+		}else{
+			LE::writeUnsignedShort($out, count($this->resourcePackEntries));
+			foreach($this->resourcePackEntries as $entry){
+				$entry->write($out, $protocolId);
+			}
 		}
+
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_20_30 && $protocolId < ProtocolInfo::PROTOCOL_1_21_40){
 			VarInt::writeUnsignedInt($out, count($this->cdnUrls));
 			foreach($this->cdnUrls as $packId => $cdnUrl){
