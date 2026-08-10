@@ -259,14 +259,10 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		CommonTypes::putBool($out, $this->enableNewInventorySystem);
 		CommonTypes::putString($out, $this->serverSoftwareVersion);
 		$out->writeByteArray($this->playerActorProperties->getEncodedNbt());
-		LE::writeUnsignedLong($out, $this->blockPaletteChecksum);
+		LE::writeUnsignedLong($out, 0);
 		CommonTypes::putUUID($out, $this->worldTemplateId);
 		CommonTypes::putBool($out, $this->enableClientSideChunkGeneration);
-		if($protocolId >= ProtocolInfo::PROTOCOL_1_26_40){
-			CommonTypes::putBool($out, true);
-		}else{
-			CommonTypes::putBool($out, $this->blockNetworkIdsAreHashes);
-		}
+		CommonTypes::putBool($out, $this->blockNetworkIdsAreHashes);
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_21_100 && $protocolId <= ProtocolInfo::PROTOCOL_1_21_124){
 			CommonTypes::putBool($out, $this->enableTickDeathSystems);
 		}

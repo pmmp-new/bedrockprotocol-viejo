@@ -424,8 +424,8 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 					$v->write($out);
 				}
 			});
-			\pmmp\encoding\Byte::writeUnsigned($out, 0); 
-			\pmmp\encoding\Byte::writeUnsigned($out, 0); 
+			\pmmp\encoding\Byte::writeUnsigned($out, 0);
+			\pmmp\encoding\Byte::writeUnsigned($out, 0);
 		}else{
 			if($this->itemInteractionData !== null){
 				$this->itemInteractionData->write($out);
