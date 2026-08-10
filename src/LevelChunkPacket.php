@@ -72,7 +72,7 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 
 		if($protocolId >= ProtocolInfo::CURRENT_PROTOCOL){
 			$this->subChunkCount = VarInt::readUnsignedInt($in);
-			$this->subChunkRequestLimit = CommonTypes::readOptional($in, VarInt::readSignedInt(...));
+			CommonTypes::writeOptional($out, $this->clientSubChunkRequestsEnabled ? ($this->subChunkRequestLimit ?? 64) : null, VarInt::writeSignedInt(...));
 			$this->clientSubChunkRequestsEnabled = $this->subChunkRequestLimit !== null;
 
 			$cacheEnabled = CommonTypes::getBool($in);
