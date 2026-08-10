@@ -858,4 +858,31 @@ final class CommonTypes{
 			self::putBool($out, false);
 		}
 	}
+	
+	/**
+	 * @phpstan-template T
+	 * @phpstan-param \Closure(ByteBufferReader) : T $reader
+	 * @phpstan-return list<T>
+	 * @throws DataDecodeException
+	 */
+	public static function readList(ByteBufferReader $in, \Closure $reader) : array{
+		$count = VarInt::readUnsignedInt($in);
+		$result = [];
+		for($i = 0; $i < $count; ++$i){
+			$result[] = $reader($in);
+		}
+		return $result;
+	}
+
+	/**
+	 * @phpstan-template T
+	 * @phpstan-param list<T> $list
+	 * @phpstan-param \Closure(ByteBufferWriter, T) : void $writer
+	 */
+	public static function writeList(ByteBufferWriter $out, array $list, \Closure $writer) : void{
+		VarInt::writeUnsignedInt($out, count($list));
+		foreach($list as $item){
+			$writer($out, $item);
+		}
+	}
 }
