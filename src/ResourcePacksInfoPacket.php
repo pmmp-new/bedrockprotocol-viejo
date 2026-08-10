@@ -34,7 +34,7 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 	 * @phpstan-var list<ResourcePackInfoEntry>
 	 */
 	public array $resourcePackEntries = [];
-	
+
 	/** @var BehaviorPackInfoEntry[] */
 	public array $behaviorPackEntries = [];
 	public bool $mustAccept = false; //if true, forces client to choose between accepting packs or being disconnected
@@ -154,8 +154,8 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 		}
 
 		if($protocolId >= ProtocolInfo::CURRENT_PROTOCOL){
-			CommonTypes::writeList($out, $this->resourcePackEntries, static fn(ByteBufferWriter $out, ResourcePackInfoEntry $entry) => $entry->write($out, $protocolId));
-		}else{
+    CommonTypes::writeList($out, array_values($this->resourcePackEntries), static fn(ByteBufferWriter $out, ResourcePackInfoEntry $entry) => $entry->write($out, $protocolId));
+	}else{
 			LE::writeUnsignedShort($out, count($this->resourcePackEntries));
 			foreach($this->resourcePackEntries as $entry){
 				$entry->write($out, $protocolId);
